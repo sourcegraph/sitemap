@@ -8,3 +8,5 @@ sitemap
 [![status](https://sourcegraph.com/api/repos/github.com/sourcegraph/sitemap/badges/status.png)](https://sourcegraph.com/github.com/sourcegraph/sitemap)
 
 Package sitemap generates sitemap.xml files based on the sitemaps.org protocol.
+
+[Documentation and usage examples at sourcegraph.com/github.com/sourcegraph/sitemap](https://sourcegraph.com/github.com/sourcegraph/sitemap)
