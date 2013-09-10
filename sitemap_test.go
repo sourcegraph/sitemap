@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestSiteMap(t *testing.T) {
+func TestMarshal(t *testing.T) {
 	tests := map[string]struct {
 		urlset URLSet
 		xml    []byte
