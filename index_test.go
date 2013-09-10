@@ -2,6 +2,7 @@ package sitemap
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 )
@@ -10,6 +11,7 @@ func TestMarshalIndex(t *testing.T) {
 	tests := map[string]struct {
 		index Index
 		xml   []byte
+		err   error
 	}{
 		"basic": {
 			index: Index{
@@ -29,12 +31,27 @@ func TestMarshalIndex(t *testing.T) {
   </sitemap>
 </sitemapindex>`),
 		},
+		"MaxSitemaps": {
+			index: Index{Sitemaps: makeSitemaps(MaxSitemaps+1, "")},
+			err:   ErrExceededMaxSitemaps,
+		},
+		"MaxFileSize": {
+			index: Index{Sitemaps: makeSitemaps(MaxSitemaps, strings.Repeat("a", 1+MaxFileSize/MaxSitemaps))},
+			err:   ErrExceededMaxFileSize,
+		},
 	}
 
 	for label, test := range tests {
 		xml, err := MarshalIndex(&test.index)
-		if err != nil {
-			t.Errorf("%s: Marshal: %s", label, err)
+		if test.err == nil {
+			if err != nil {
+				t.Errorf("%s: MarshalIndex: %s", label, err)
+				continue
+			}
+		} else {
+			if err != test.err {
+				t.Errorf("%s: MarshalIndex: want error %q, got %q", label, test.err, err)
+			}
 			continue
 		}
 
@@ -46,4 +63,12 @@ func TestMarshalIndex(t *testing.T) {
 			t.Errorf("%s: want XML %q, got %q", label, test.xml, xml)
 		}
 	}
+}
+
+func makeSitemaps(n int, suffix string) []Sitemap {
+	sitemaps := make([]Sitemap, n)
+	for i := 0; i < n; i++ {
+		sitemaps[i] = Sitemap{Loc: "http://example.com/" + suffix}
+	}
+	return sitemaps
 }

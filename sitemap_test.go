@@ -2,6 +2,7 @@ package sitemap
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 )
@@ -10,6 +11,7 @@ func TestMarshal(t *testing.T) {
 	tests := map[string]struct {
 		urlset URLSet
 		xml    []byte
+		err    error
 	}{
 		"basic": {
 			urlset: URLSet{
@@ -33,12 +35,27 @@ func TestMarshal(t *testing.T) {
   </url>
 </urlset>`),
 		},
+		"MaxURLs": {
+			urlset: URLSet{URLs: makeURLs(MaxURLs+1, "")},
+			err:    ErrExceededMaxURLs,
+		},
+		"MaxFileSize": {
+			urlset: URLSet{URLs: makeURLs(MaxURLs, strings.Repeat("a", 1+MaxFileSize/MaxURLs))},
+			err:    ErrExceededMaxFileSize,
+		},
 	}
 
 	for label, test := range tests {
 		xml, err := Marshal(&test.urlset)
-		if err != nil {
-			t.Errorf("%s: Marshal: %s", label, err)
+		if test.err == nil {
+			if err != nil {
+				t.Errorf("%s: Marshal: %s", label, err)
+				continue
+			}
+		} else {
+			if err != test.err {
+				t.Errorf("%s: Marshal: want error %q, got %q", label, test.err, err)
+			}
 			continue
 		}
 
@@ -50,4 +67,12 @@ func TestMarshal(t *testing.T) {
 			t.Errorf("%s: want XML %q, got %q", label, test.xml, xml)
 		}
 	}
+}
+
+func makeURLs(n int, suffix string) []URL {
+	urls := make([]URL, n)
+	for i := 0; i < n; i++ {
+		urls[i] = URL{Loc: "http://example.com/" + suffix}
+	}
+	return urls
 }
