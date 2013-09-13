@@ -46,9 +46,9 @@ type URLSet struct {
 // information.
 type URL struct {
 	Loc        string     `xml:"loc"`
-	LastMod    time.Time  `xml:"lastmod"`
-	ChangeFreq ChangeFreq `xml:"changefreq"`
-	Priority   float64    `xml:"priority"`
+	LastMod    *time.Time `xml:"lastmod,omitempty"`
+	ChangeFreq ChangeFreq `xml:"changefreq,omitempty"`
+	Priority   float64    `xml:"priority,omitempty"`
 }
 
 // ChangeFreq indicates how frequently the page is likely to change. This value

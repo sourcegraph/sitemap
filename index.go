@@ -28,8 +28,8 @@ type Index struct {
 //
 // Refer to http://www.sitemaps.org/protocol.html#index for more information.
 type Sitemap struct {
-	Loc     string    `xml:"loc"`
-	LastMod time.Time `xml:"lastmod"`
+	Loc     string     `xml:"loc"`
+	LastMod *time.Time `xml:"lastmod,omitempty"`
 }
 
 // MarshalIndex serializes the sitemap index to XML, with the <sitemapindex>

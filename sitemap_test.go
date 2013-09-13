@@ -8,6 +8,8 @@ import (
 )
 
 func TestMarshal(t *testing.T) {
+	t0 := time.Date(2013, time.September, 9, 11, 22, 33, 0, time.UTC)
+
 	tests := map[string]struct {
 		urlset URLSet
 		xml    []byte
@@ -18,7 +20,7 @@ func TestMarshal(t *testing.T) {
 				URLs: []URL{
 					{
 						Loc:        "http://www.example.com/",
-						LastMod:    time.Date(2013, time.September, 9, 11, 22, 33, 0, time.UTC),
+						LastMod:    &t0,
 						ChangeFreq: Daily,
 						Priority:   0.7,
 					},
@@ -32,6 +34,20 @@ func TestMarshal(t *testing.T) {
     <lastmod>2013-09-09T11:22:33Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
+  </url>
+</urlset>`),
+		},
+		"unset optional fields": {
+			urlset: URLSet{
+				URLs: []URL{
+					{Loc: "http://www.example.com/"},
+				},
+			},
+			xml: []byte(`
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://www.example.com/</loc>
   </url>
 </urlset>`),
 		},

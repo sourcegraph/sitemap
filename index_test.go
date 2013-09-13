@@ -8,6 +8,8 @@ import (
 )
 
 func TestMarshalIndex(t *testing.T) {
+	t0 := time.Date(2013, time.September, 9, 11, 22, 33, 0, time.UTC)
+
 	tests := map[string]struct {
 		index Index
 		xml   []byte
@@ -18,7 +20,7 @@ func TestMarshalIndex(t *testing.T) {
 				Sitemaps: []Sitemap{
 					{
 						Loc:     "http://www.example.com/sitemap.xml.gz",
-						LastMod: time.Date(2013, time.September, 9, 11, 22, 33, 0, time.UTC),
+						LastMod: &t0,
 					},
 				},
 			},
@@ -28,6 +30,20 @@ func TestMarshalIndex(t *testing.T) {
   <sitemap>
     <loc>http://www.example.com/sitemap.xml.gz</loc>
     <lastmod>2013-09-09T11:22:33Z</lastmod>
+  </sitemap>
+</sitemapindex>`),
+		},
+		"unset optional fields": {
+			index: Index{
+				Sitemaps: []Sitemap{
+					{Loc: "http://www.example.com/sitemap.xml.gz"},
+				},
+			},
+			xml: []byte(`
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>http://www.example.com/sitemap.xml.gz</loc>
   </sitemap>
 </sitemapindex>`),
 		},
