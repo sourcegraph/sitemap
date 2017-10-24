@@ -1,3 +1,5 @@
+**DEPRECATED: This repository is now deprecated, as the generated sitemap URLs do not match the current site. The current site is also a single-page JavaScript app that is not rendered properly by Googlebot, so that issue must be addressed before we re-publish the sitemap**.
+
 sitemap
 ==============================================
 
